@@ -19,4 +19,21 @@ class User(db.Model):
     password_hash = db.Column('password_hash', db.String(64))
     bucketlists =  db.relationship('Bucketlists', backref='user', lazy='dynamic')
 
+    def hash_password(self, password):
+        self.password_hash = pwd_context.encrypt(password)
+
+    def verify_password(self, password):
+        return pwd_context.verify(password, self.password_hash)
+
+    @property
+    def serialize(self):
+       """Return object data in easily serializeable format"""
+       return {
+           'first name':self.first_name,
+           'Last name':self.last_name,
+           'gender':self.gender,
+           'username':self.gender,
+           'email':self.email
+        }
+
     
