@@ -1,5 +1,5 @@
 from flask import request, jsonify, make_response, abort, url_for, abort, g
-from flask.ext.httpauth import HTTPBasicAuth
+from flask_httpauth import HTTPBasicAuth
 import json
 
 import datetime
@@ -13,17 +13,35 @@ db.create_all()
 db.session.commit()
 auth = HTTPBasicAuth()
 
+@app.errorhandler(404)
+def not_found(error):
+    return make_response(jsonify({'Error':'Page Not Found'}), 404)
+
+@app.errorhandler(405)
+def method_not_allowed(error):
+    return make_response(jsonify({'Error':'Method Not Allowed In this URI'}), 404)
+
+@app.errorhandler(500)
+def object_not_available(error):
+    return make_response(jsonify({'Error':'Sorry Object not available'}), 500)
+
 @auth.verify_password
 def verify_password(username_or_token, password):
     user_id = User.verify_auth_token(username_or_token)
     if user_id:
-        user = session.query(User).filter_by(id = user_id).one()
+        user = db.session.query(User).filter_by(id = user_id).one()
     else:
-        user = session.query(User).filter_by(username = username_or_token).first()
+        user = db.session.query(User).filter_by(username = username_or_token).first()
         if not user or not user.verify_password(password):
             return False
     g.user = user
     return True
+
+@app.route('/token')
+@auth.login_required
+def get_auth_token():
+    token = g.user.generate_auth_token()
+    return jsonify({'token': token.decode('ascii')})
 
 @app.route('/auth/register', methods=['POST'])
 def registerUser():
