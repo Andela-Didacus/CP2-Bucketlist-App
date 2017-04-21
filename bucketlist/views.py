@@ -7,7 +7,7 @@ import time
 db.create_all()
 db.commit()
 
-@app.route('/auth/register/', methods=['POST'])
+@app.route('/auth/register', methods=['POST'])
 def registerUser():
     day = time.time()
     timestamp = str(datetime.datetime.fromtimestamp(
@@ -37,3 +37,15 @@ def registerUser():
             'email':user.email 
          }), 201
 
+@app.route('/')
+@app.route('/bucketlists/', methods=['GET','POST'])
+def bucketlistsFunction():
+    if request.method == 'GET':
+        return getAllBucketlists()
+
+
+def getAllBucketlists():
+    bucketlists = db.session.query(Bucketlists).all()
+    return jsonify(bucketlists=[i.serialize for i in bucketlists])
+
+    
