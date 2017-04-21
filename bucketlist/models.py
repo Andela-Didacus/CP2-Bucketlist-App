@@ -47,4 +47,32 @@ class Bucketlists(db.Model):
     user_id = db.Column(db.Integer, db.ForeignKey('User.id'))
     items = db.relationship('Items', backref='bucketlist', lazy='dynamic')
 
-    
+    @property
+    def serialize(self):
+       """Return object data in easily serializeable format"""
+       return {
+       	   'id': self.name,
+           'name': self.name,
+           'date_created' : self.date_created,
+           'created_by': self.created_by
+       }
+
+class Items(db.Model):
+    __tablename_='Items'
+
+    id = db.Column('id', db.Integer, primary_key=True)
+    name = db.Column('name', db.String(100), nullable=False)
+    date_created= db.Column('date_created', db.String(50))
+    date_modified = db.Column('date_modified', db.String(50))
+    done = db.Column('done', db.String(50), nullable=False)
+    bucketlist_id = db.Column(db.Integer, db.ForeignKey('Bucketlists.id'))
+
+    @property
+    def serialize(self):
+       """Return object data in easily serializeable format"""
+       return {
+           'id': self.name,
+           'name': self.name,
+           'date_created' : self.date_created,
+           'created_by': self.created_by
+       }
