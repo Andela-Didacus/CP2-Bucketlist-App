@@ -36,4 +36,15 @@ class User(db.Model):
            'email':self.email
         }
 
+class Bucketlists(db.Model):
+    __tablename_='Bucketlists'
+
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column('name', db.String(80), nullable = False)
+    date_created= db.Column('date_created', db.String(50))
+    date_modified = db.Column('date_modified', db.String(50))
+    created_by = db.Column('created_by', db.String(50))
+    user_id = db.Column(db.Integer, db.ForeignKey('User.id'))
+    items = db.relationship('Items', backref='bucketlist', lazy='dynamic')
+
     
