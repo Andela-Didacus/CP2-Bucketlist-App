@@ -1,13 +1,29 @@
-from flask import request, jsonify, make_response, abort, url_for, abort
-
-from models import Items, Bucketlists, User
-from app import app, db
+from flask import request, jsonify, make_response, abort, url_for, abort, g
+from flask.ext.httpauth import HTTPBasicAuth
+import json
 
 import datetime
 import time
 
+from models import Items, Bucketlists, User
+from app import app, db
+
+
 db.create_all()
 db.session.commit()
+auth = HTTPBasicAuth()
+
+@auth.verify_password
+def verify_password(username_or_token, password):
+    user_id = User.verify_auth_token(username_or_token)
+    if user_id:
+        user = session.query(User).filter_by(id = user_id).one()
+    else:
+        user = session.query(User).filter_by(username = username_or_token).first()
+        if not user or not user.verify_password(password):
+            return False
+    g.user = user
+    return True
 
 @app.route('/auth/register', methods=['POST'])
 def registerUser():
@@ -45,6 +61,11 @@ def get_user(id):
     if not user:
         abort(400)
     return jsonify({'username': user.username})
+
+@app.route('/users/')
+def getUsers():
+    return getAllUsers()
+
 
 @app.route('/')
 @app.route('/bucketlists/', methods=['GET','POST'])
@@ -89,6 +110,10 @@ def itemFunction(id, item_id):
     elif request.method == 'DELETE':
         return deleteItem(id, item_id)
     
+#helper functions
+def getAllUsers():
+    users = db.session.query(User).all()
+    return jsonify(users=[i.serialize for i in users])
 
 def getBucketlist(id):
     bucketlist = db.session.query(Bucketlists).filter_by(id = id).one()
