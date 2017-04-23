@@ -70,6 +70,7 @@ def registerUser():
     return jsonify({ 'first name': user.first_name,
             'last name':user.last_name,
             'gender':user.gender,
+            'username':user.username,
             'email':user.email 
          }), 201
 
@@ -80,10 +81,26 @@ def get_user(id):
         abort(400)
     return jsonify({'username': user.username})
 
-@app.route('/users/')
+@app.route('/users/', methods=['GET'])
 def getUsers():
     return getAllUsers()
 
+@app.route('/users/<int:id>', methods=['GET', 'PUT', 'DELETE'])
+def userFunction(id):
+    if request.method == 'GET':
+        return getUser(id)
+    elif request.method == 'DELETE':
+        return deleteUser(id)
+    elif request.method == 'PUT': 
+        first_name = request.json.get('first name')
+        last_name = request.json.get('last name')
+        gender = request.json.get('gender')
+        username = request.json.get('username')
+        password = request.json.get('password')
+        email = request.json.get('email')
+        return editUser(id, first_name, last_name, gender, username, password, email)
+
+    
 
 @app.route('/')
 @app.route('/bucketlists/', methods=['GET','POST'])
@@ -131,7 +148,35 @@ def itemFunction(id, item_id):
 #helper functions
 def getAllUsers():
     users = db.session.query(User).all()
-    return jsonify(users=[i.serialize for i in users])
+    return jsonify(users=[user.serialize for user in users])
+
+def deleteUser(id):
+    user = db.session.query(User).filter_by(id = id).one()
+    db.session.delete(user)
+    db.session.commit()
+    return getAllUsers()
+
+def getUser(id):
+    user = db.session.query(User).filter_by(id = id).one()
+    return jsonify(user=user.serialize)
+
+def editUser(id, first_name=None, last_name=None, gender=None, username=None, password=None, email=None):
+    user = db.session.query(User).filter_by(id = id).one()
+    if first_name:
+        user.first_name = first_name
+    if last_name:
+        user.last_name = last_name
+    if gender:
+        user.gender = gender
+    if username:
+        user.username = username
+    if password:
+        user.hash_password(password)
+    if email:
+        user.email = email
+    db.session.add(user)
+    db.session.commit()
+    return getUser(id)
 
 def getBucketlist(id):
     bucketlist = db.session.query(Bucketlists).filter_by(id = id).one()
