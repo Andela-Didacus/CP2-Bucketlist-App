@@ -25,6 +25,10 @@ def method_not_allowed(error):
 def object_not_available(error):
     return make_response(jsonify({'Error':'Sorry Object not available'}), 500)
 
+@app.errorhandler(401)
+def unauthorised_access(error):
+    return make_response(jsonify({'Error':'Need to login to access this page'}), 401)
+
 @auth.verify_password
 def verify_password(username_or_token, password):
     user_id = User.verify_auth_token(username_or_token)
