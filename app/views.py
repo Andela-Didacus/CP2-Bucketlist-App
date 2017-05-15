@@ -45,7 +45,6 @@ def verify_auth_token(token):
         return False
     if user:
         g.user = db.session.query(User).filter_by(id=user).first()
-        print(g.user)
         return True
 
 
@@ -134,7 +133,7 @@ def userFunction(id):
 
 
 @app.route('/')
-@app.route('/bucketlists/', methods=['GET', 'POST'])
+@app.route('/api/v1/bucketlists/', methods=['GET', 'POST'])
 @auth.login_required
 def bucketlistsFunction():
     if request.method == 'GET':
@@ -149,7 +148,7 @@ def bucketlistsFunction():
         return addNewBucketlist(name, created_by, items)
 
 
-@app.route('/bucketlists/<int:id>/', methods=['GET', 'PUT', 'DELETE'])
+@app.route('/api/v1/bucketlists/<int:id>/', methods=['GET', 'PUT', 'DELETE'])
 @auth.login_required
 def singleBucketlist(id):
     if request.method == 'GET':
@@ -161,7 +160,7 @@ def singleBucketlist(id):
         return deleteBucketlist(id, g.user.id)
 
 
-@app.route('/bucketlists/<int:id>/items/', methods=['GET', 'POST', 'DELETE'])
+@app.route('/api/v1/bucketlists/<int:id>/items/', methods=['GET', 'POST', 'DELETE'])
 @auth.login_required
 def bucketlistItems(id):
     if request.method == 'GET':
@@ -174,7 +173,7 @@ def bucketlistItems(id):
         return deleteAllItems(id, g.user.id)
 
 
-@app.route('/bucketlists/<int:id>/items/<int:item_id>/', methods=['GET', 'PUT', 'DELETE'])
+@app.route('/api/v1/bucketlists/<int:id>/items/<int:item_id>/', methods=['GET', 'PUT', 'DELETE'])
 @auth.login_required
 def itemFunction(id, item_id):
     if request.method == 'GET':
@@ -227,7 +226,7 @@ def editUser(id, first_name=None, last_name=None, gender=None, username=None, pa
 
 def getAllBucketlists(user_id):
     # try:
-    bucketlists = db.session.query(Bucketlists).all()
+    bucketlists = db.session.query(Bucketlists).filter_by(created_by=user_id).all()
     return jsonify(bucketlists=[i.serialize for i in bucketlists]), 200
     # except:
     # return jsonify({"message":"OOPS!! Sorry something went wrong please try

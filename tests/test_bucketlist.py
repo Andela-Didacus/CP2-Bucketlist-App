@@ -23,14 +23,13 @@ class TestBucketList(BaseTestCase):
                 "done": "False"
             }]
         }
-        self.client.post("/bucketlists/", data=json.dumps(bucketlist), headers={
+        self.client.post("/api/v1/bucketlists/", data=json.dumps(bucketlist), headers={
                          "Authorization": "Bearer " + self.token},
                          content_type="application/json")
 
     def test_verification_required(self):
         self.token = self.login_test_user()
-        print(self.token)
-        response = self.client.get('/bucketlists/')
+        response = self.client.get('/api/v1/bucketlists/')
         self.assertEqual(response.status_code, 401)
 
     def test_add_bucketlist(self):
@@ -42,7 +41,7 @@ class TestBucketList(BaseTestCase):
                 "done": "False"
             }]
         }
-        response = self.client.post("/bucketlists/", data=json.dumps(bucketlist), headers={
+        response = self.client.post("/api/v1/bucketlists/", data=json.dumps(bucketlist), headers={
                                     "Authorization": "Bearer " + self.token},
                                     content_type="application/json")
         self.assertEqual(response.status_code, 201)
@@ -56,7 +55,7 @@ class TestBucketList(BaseTestCase):
     def test_get_bucketlists(self):
         self.token = self.login_test_user()
         response = self.client.get(
-            "/bucketlists/", headers={"Authorization": "Bearer " + self.token})
+            "/api/v1/bucketlists/", headers={"Authorization": "Bearer " + self.token})
         self.assertEqual(response.status_code, 200)
 
     def test_update_bucketlist(self):
@@ -65,7 +64,7 @@ class TestBucketList(BaseTestCase):
         update_bucketlist = {
             "name": "sleep"
         }
-        response = self.client.put("/bucketlists/1/", data=json.dumps(update_bucketlist), headers={
+        response = self.client.put("/api/v1/bucketlists/1/", data=json.dumps(update_bucketlist), headers={
                                    "Authorization": "Bearer " + self.token},
                                    content_type="application/json")
         self.assertEqual(response.status_code, 202)
@@ -74,13 +73,13 @@ class TestBucketList(BaseTestCase):
         self.create_test_bucketlist()
         self.token = self.login_test_user()
         response = self.client.delete(
-            "/bucketlists/1/", headers={"Authorization": "Bearer " + self.token})
+            "/api/v1/bucketlists/1/", headers={"Authorization": "Bearer " + self.token})
         self.assertEqual(response.status_code, 202)
 
     def test_view_single_bucketlist(self):
         self.create_test_bucketlist()
         self.token = self.login_test_user()
-        response = self.client.get("/bucketlists/1/", headers={
+        response = self.client.get("/api/v1/bucketlists/1/", headers={
                                    "Authorization": "Bearer " + self.token},
                                    content_type="application/json")
         self.assertEqual(response.status_code, 200)
@@ -88,7 +87,7 @@ class TestBucketList(BaseTestCase):
     def test_view_items(self):
         self.create_test_bucketlist()
         self.login_test_user()
-        response = self.client.get('/bucketlists/1/items/', headers={
+        response = self.client.get('/api/v1/bucketlists/1/items/', headers={
                                    "Authorization": "Bearer " + self.token},
                                    content_type="application/json")
         self.assertEqual(response.status_code, 200)
@@ -97,7 +96,7 @@ class TestBucketList(BaseTestCase):
         self.create_test_bucketlist()
         self.token = self.login_test_user()
         response = self.client.get(
-            '/bucketlists/1/items/1/', headers={"Authorization": "Bearer " + self.token})
+            '/api/v1/bucketlists/1/items/1/', headers={"Authorization": "Bearer " + self.token})
         self.assertEqual(response.status_code, 200)
 
     def test_edit_item(self):
@@ -107,7 +106,7 @@ class TestBucketList(BaseTestCase):
             "name": "finish work",
             "done": "true"
         }
-        response = self.client.put('/bucketlists/1/items/1/', data=json.dumps(edited_item), headers={
+        response = self.client.put('/api/v1/bucketlists/1/items/1/', data=json.dumps(edited_item), headers={
                                    "Authorization": "Bearer " + self.token},
                                    content_type="application/json")
         self.assertEqual(response.status_code, 202)
@@ -115,7 +114,7 @@ class TestBucketList(BaseTestCase):
     def test_delete_item(self):
         self.create_test_bucketlist()
         self.token = self.login_test_user()
-        response = self.client.delete('/bucketlists/1/items/1/', headers={
+        response = self.client.delete('/api/v1/bucketlists/1/items/1/', headers={
                                       "Authorization": "Bearer " + self.token},
                                       content_type="application/json")
         self.assertEqual(response.status_code, 202)
@@ -130,7 +129,7 @@ class TestBucketList(BaseTestCase):
                 "done": "False"
             }]
         }
-        response = self.client.post("/bucketlists/", data=json.dumps(bucketlist), headers={
+        response = self.client.post("/api/v1/bucketlists/", data=json.dumps(bucketlist), headers={
                                     "Authorization": "Bearer " + self.token},
                                     content_type="application/json")
         self.assertEqual(response.status_code, 400)
@@ -142,7 +141,7 @@ class TestBucketList(BaseTestCase):
             "name": "Test",
             "created by": 12
         }
-        response = self.client.post("/bucketlists/", data=json.dumps(bucketlist), headers={
+        response = self.client.post("/api/v1/bucketlists/", data=json.dumps(bucketlist), headers={
                                     "Authorization": "Bearer " + self.token},
                                     content_type="application/json")
         self.assertEqual(response.status_code, 201)
@@ -150,7 +149,7 @@ class TestBucketList(BaseTestCase):
     def test_view_unavailable_item(self):
         self.create_test_bucketlist()
         self.token = self.login_test_user()
-        response = self.client.get('/bucketlists/1/items/1000/',  headers={
+        response = self.client.get('/api/v1/bucketlists/1/items/1000/',  headers={
                                    "Authorization": "Bearer " + self.token},
                                    content_type="application/json")
         self.assertEqual(response.status_code, 404)
@@ -158,7 +157,7 @@ class TestBucketList(BaseTestCase):
     def test_view_unavailable_bucketlist(self):
         self.create_test_bucketlist()
         self.token = self.login_test_user()
-        response = self.client.get("/bucketlists/1000/",  headers={
+        response = self.client.get("/api/v1/bucketlists/1000/",  headers={
                                    "Authorization": "Bearer " + self.token},
                                    content_type="application/json")
         self.assertEqual(response.status_code, 404)
@@ -166,7 +165,7 @@ class TestBucketList(BaseTestCase):
     def test_view_unavailable_bucketlist_items(self):
         self.create_test_bucketlist()
         self.token = self.login_test_user()
-        response = self.client.get('/bucketlists/1000/items',  headers={
+        response = self.client.get('/api/v1/bucketlists/1000/items',  headers={
                                    "Authorization": "Bearer " + self.token},
                                    content_type="application/json")
         self.assertEqual(response.status_code, 301)
