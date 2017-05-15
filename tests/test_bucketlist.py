@@ -29,7 +29,6 @@ class TestBucketList(BaseTestCase):
 
     def test_verification_required(self):
         self.token = self.login_test_user()
-        print(self.token)
         response = self.client.get('/bucketlists/')
         self.assertEqual(response.status_code, 401)
 

@@ -75,9 +75,7 @@ class Bucketlists(db.Model):
     def serialize(self):
         """Return object data in easily serializeable format"""
         items = db.session.query(Items).filter_by(bucketlist_id=self.id).all()
-    #    items = [item.serialize() for item in all_items]
         items = [i.serialize for i in items]
-        print(items)
         return {
             'id': self.id,
             'name': self.name,
@@ -103,8 +101,8 @@ class Items(db.Model):
         return {
             'id': self.id,
             'name': self.name,
-            'date created': self.date_created,
-            'date modified': self.date_modified,
+            'date_created': self.date_created,
+            'date_modified': self.date_modified,
             'done': self.done
         }
 
