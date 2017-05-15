@@ -133,7 +133,7 @@ def userFunction(id):
 
 
 @app.route('/')
-@app.route('/bucketlists/', methods=['GET', 'POST'])
+@app.route('/api/v1/bucketlists/', methods=['GET', 'POST'])
 @auth.login_required
 def bucketlistsFunction():
     if request.method == 'GET':
@@ -148,7 +148,7 @@ def bucketlistsFunction():
         return addNewBucketlist(name, created_by, items)
 
 
-@app.route('/bucketlists/<int:id>/', methods=['GET', 'PUT', 'DELETE'])
+@app.route('/api/v1/bucketlists/<int:id>/', methods=['GET', 'PUT', 'DELETE'])
 @auth.login_required
 def singleBucketlist(id):
     if request.method == 'GET':
@@ -160,7 +160,7 @@ def singleBucketlist(id):
         return deleteBucketlist(id, g.user.id)
 
 
-@app.route('/bucketlists/<int:id>/items/', methods=['GET', 'POST', 'DELETE'])
+@app.route('/api/v1/bucketlists/<int:id>/items/', methods=['GET', 'POST', 'DELETE'])
 @auth.login_required
 def bucketlistItems(id):
     if request.method == 'GET':
@@ -173,7 +173,7 @@ def bucketlistItems(id):
         return deleteAllItems(id, g.user.id)
 
 
-@app.route('/bucketlists/<int:id>/items/<int:item_id>/', methods=['GET', 'PUT', 'DELETE'])
+@app.route('/api/v1/bucketlists/<int:id>/items/<int:item_id>/', methods=['GET', 'PUT', 'DELETE'])
 @auth.login_required
 def itemFunction(id, item_id):
     if request.method == 'GET':
