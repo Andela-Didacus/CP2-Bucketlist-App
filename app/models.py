@@ -106,5 +106,4 @@ class Items(db.Model):
             'done': self.done
         }
 
-
 db.create_all()
