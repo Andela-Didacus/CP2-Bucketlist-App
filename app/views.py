@@ -226,7 +226,8 @@ def editUser(id, first_name=None, last_name=None, gender=None, username=None, pa
 
 def getAllBucketlists(user_id):
     # try:
-    bucketlists = db.session.query(Bucketlists).filter_by(created_by=user_id).all()
+    bucketlists = db.session.query(
+        Bucketlists).filter_by(created_by=user_id).all()
     return jsonify(bucketlists=[i.serialize for i in bucketlists]), 200
     # except:
     # return jsonify({"message":"OOPS!! Sorry something went wrong please try
