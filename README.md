@@ -30,7 +30,7 @@ Follow the following steps to succesfully _**install**_ the program:
 * `POST /auth/login`          -------              Logs a user in
 * `POST /auth/register`       -------              Register a user
 * `GET /users`  ----------- Returns A list of all Users
-* `DELETE/users/<id>/    -------Deletes a user from the system
+* `DELETE/users/<id>/`    -------Deletes a user from the system
 * `PUT/users/<id>/` --------updates user Information
 * `POST /bucketlists/`        -------              Create a new bucket list
 * `GET /bucketlists/`         -------              List all the created bucket lists
